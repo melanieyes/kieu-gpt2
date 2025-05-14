@@ -1,4 +1,4 @@
-kieu_streamlit_app/
-├── app.py                   
-├── truyen-kieu.jpg           
-├── requirements.txt
+transformers==4.39.3
+torch
+safetensors
+streamlit
