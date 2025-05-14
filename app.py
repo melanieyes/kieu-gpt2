@@ -4,13 +4,7 @@ import torch
 import transformers
 from transformers import pipeline
 
-# ====================== Debug Info (optional, can remove later) ======================
-st.sidebar.markdown("### ℹ️ Debug Info")
-st.sidebar.write(f"Python version: `{sys.version}`")
-st.sidebar.write(f"PyTorch version: `{torch.__version__}`")
-st.sidebar.write(f"Transformers version: `{transformers.__version__}`")
-
-# ====================== Page Config ======================
+# ✅ MUST BE FIRST
 st.set_page_config(
     page_title="Truyện Kiều - Vietnamese Poem Generator",
     page_icon="📝",
@@ -18,12 +12,19 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ====================== Debug Info ======================
+st.sidebar.markdown("### ℹ️ Debug Info")
+st.sidebar.write(f"Python version: `{sys.version}`")
+st.sidebar.write(f"PyTorch version: `{torch.__version__}`")
+st.sidebar.write(f"Transformers version: `{transformers.__version__}`")
+
 # ====================== Header ======================
 st.image("truyen-kieu.jpg", width=350)
 st.title("Truyện Kiều - Vietnamese Poem Generator")
 st.markdown(
     """
     This app generates verses inspired by **Nguyễn Du**'s *Truyện Kiều*, using a GPT-2 model fine-tuned on the poem.<br>
+    Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
     """,
     unsafe_allow_html=True
 )
@@ -83,7 +84,6 @@ st.markdown(
     <div style='text-align: center; color: gray; font-size: 14px;'>
         Made by <strong>Melanie</strong>, 2025<br>
         Product of <em>Introduction to Artificial Intelligence</em> class<br>
-        
     </div>
     """,
     unsafe_allow_html=True
