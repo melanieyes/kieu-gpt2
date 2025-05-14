@@ -21,7 +21,7 @@ with right_col:
         st.title("Lục Bát Poem Generator")
         st.markdown("""
         This app generates Vietnamese *lục bát* poems using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
-        Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
+        Model: <a href="https://huggingface.co/melanieyes/melanie-poem-generation" target="_blank">melanieyes/melanie-poem-generation</a>
         """, unsafe_allow_html=True)
 
         with st.expander("📜 Instructions", expanded=True):
@@ -35,8 +35,8 @@ with right_col:
     # ==== Load Model from Hugging Face ====
     @st.cache_resource
     def load_model_and_tokenizer():
-        model = AutoModelForCausalLM.from_pretrained("melanieyes/kieu-gpt2")
-        tokenizer = AutoTokenizer.from_pretrained("melanieyes/kieu-gpt2", use_fast=False)
+        model = AutoModelForCausalLM.from_pretrained("melanieyes/melanie-poem-generation")
+        tokenizer = AutoTokenizer.from_pretrained("melanieyes/melanie-poem-generation", use_fast=False)
         tokenizer.pad_token = tokenizer.eos_token
         model.to("cuda" if torch.cuda.is_available() else "cpu")
         model.eval()
