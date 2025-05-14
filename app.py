@@ -4,7 +4,7 @@ import torch
 import transformers
 from transformers import pipeline
 
-# ✅ MUST BE FIRST
+# Must be the first Streamlit command
 st.set_page_config(
     page_title="Truyện Kiều - Vietnamese Poem Generator",
     page_icon="📝",
@@ -12,13 +12,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ====================== Debug Info ======================
+# Optional Debug Info
 st.sidebar.markdown("### ℹ️ Debug Info")
 st.sidebar.write(f"Python version: `{sys.version}`")
 st.sidebar.write(f"PyTorch version: `{torch.__version__}`")
 st.sidebar.write(f"Transformers version: `{transformers.__version__}`")
 
-# ====================== Header ======================
+# Header
 st.image("truyen-kieu.jpg", width=350)
 st.title("Truyện Kiều - Vietnamese Poem Generator")
 st.markdown(
@@ -31,15 +31,15 @@ st.markdown(
 
 with st.expander("📜 Instructions"):
     st.write("""
-    1. Provide a starting phrase or verse in Vietnamese.
+    1. Enter a starting phrase or verse in Vietnamese.
     2. Adjust the generation parameters.
-    3. Click **Generate Poem** to create a new poetic verse inspired by Truyện Kiều.
+    3. Click **Generate Poem** to produce a verse inspired by Truyện Kiều.
     """)
 
-# ====================== Input Prompt ======================
+# Prompt input
 prompt_input = st.text_area("✍️ Starting Phrase:", "Trăm năm trong cõi người ta\n", height=100)
 
-col1, col_spacer, col2 = st.columns([0.7, 0.05, 1.0])
+col1, _, col2 = st.columns([0.7, 0.05, 1.0])
 
 with col1:
     max_length = st.slider("Max Output Tokens", 10, 200, 75)
@@ -56,8 +56,7 @@ with col2:
                     "text-generation",
                     model="melanieyes/kieu-gpt2",
                     tokenizer="melanieyes/kieu-gpt2",
-                    trust_remote_code=True,
-                    local_files_only=False
+                    trust_remote_code=True
                 )
 
                 result = generator(
@@ -75,15 +74,14 @@ with col2:
                     st.write(line)
 
             except Exception as e:
-                st.error(f"⚠️ Error: {e}")
+                st.error(f"⚠️ Error generating poem:\n\n{e}")
 
-# ====================== Footer ======================
+# Footer
 st.markdown(
     """
     <hr>
     <div style='text-align: center; color: gray; font-size: 14px;'>
-        Made by <strong>Melanie</strong>, 2025<br>
-        Product of <em>Introduction to Artificial Intelligence</em> class<br>
+        A project from <em>Introduction to Artificial Intelligence</em>, made by <strong>Melanie</strong>, 2025
     </div>
     """,
     unsafe_allow_html=True
