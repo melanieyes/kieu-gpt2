@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ==== App Banner ====
-st.image("truyen-kieu.jpg", width=400, caption="Illustration from Truyện Kiều")
+st.image("truyen-kieu.jpg", width=500)
 
 # ==== Title and Description ====
 st.title("Luc Bát Poem Generator")
