@@ -3,28 +3,31 @@ import torch
 import unicodedata
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# ==== Streamlit Config ====
+# ==== Page Setup ====
 st.set_page_config(
-    page_title="Truyện Kiều - Lục Bát Poem Generator",
+    page_title="Luc Bát Poem Generator",
     page_icon="📝",
     layout="wide"
 )
 
-# ==== Header ====
-st.title("Truyện Kiều - Lục Bát Poem Generator")
+# ==== App Banner ====
+st.image("truyen-kieu.jpg", width=400, caption="Illustration from Truyện Kiều")
+
+# ==== Title and Description ====
+st.title("Luc Bát Poem Generator")
 st.markdown("""
-This app generates *lục bát* poems in Vietnamese using a fine-tuned GPT-2 model.<br>
+This app generates Vietnamese *lục bát* poems using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
 Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
 """, unsafe_allow_html=True)
 
 with st.expander("📜 Instructions"):
     st.write("""
-    1. Enter a Vietnamese phrase as the starting prompt (e.g., 6–8 syllables).
-    2. Click **Generate Poem** to get a poem in *lục bát* form.
+    1. Enter a Vietnamese phrase to begin the poem (typically 6–8 syllables).
+    2. Click **Generate Poem** to produce 4 lines in *lục bát* style.
     """)
 
-# ==== Prompt ====
-prompt = st.text_input("✍️ Starting Prompt:", "trăm năm trăm cõi người ta")
+# ==== User Input ====
+prompt = st.text_input("✍️ Starting Prompt:", "thương sao cho trọn thì thương")
 
 # ==== Load Model from Hugging Face ====
 @st.cache_resource
@@ -38,7 +41,7 @@ def load_model_and_tokenizer():
 
 model, tokenizer = load_model_and_tokenizer()
 
-# ==== Utility Functions ====
+# ==== Tone and Form Functions ====
 def get_tone_class(syllable):
     syllable = unicodedata.normalize('NFC', syllable.lower())
     for char in syllable[::-1]:
@@ -91,12 +94,12 @@ def generate_luc_bat_poem(model, tokenizer, prompt, max_lines=3, max_attempts=10
             return lines
     return ["[FAILED TO GENERATE]"] * max_lines
 
-# ==== Generate Button ====
+# ==== Generate and Display ====
 if st.button("📌 Generate Poem"):
     with st.spinner("✨ Generating..."):
         try:
             poem_lines = generate_luc_bat_poem(model, tokenizer, prompt, max_lines=4)
-            st.subheader("🌸 Lục Bát Poem Output")
+            st.subheader("🌸 Generated Lục Bát Poem")
             st.text("\n".join(poem_lines))
         except Exception as e:
             st.error(f"❌ Error: {e}")
