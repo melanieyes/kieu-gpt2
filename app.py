@@ -23,9 +23,9 @@ with right_col:
         2. Click **Generate** to get a matching *bát* line.
         """)
 
-    col1, col2 = st.columns([3, 1])
-    luc_line = col1.text_input("✍️ Lục Line (6 syllables):", "trăng vàng in bóng bên thềm")
-    generate_clicked = col2.button("📌 Generate")
+luc_line = st.text_input("✍️ Lục Line (6 syllables):", "trăng vàng in bóng bên thềm")
+generate_clicked = st.button("📌 Generate")
+
 
 # === Load model/tokenizer ===
 @st.cache_resource
