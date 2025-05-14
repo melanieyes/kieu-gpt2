@@ -5,7 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # ==== Streamlit Config ====
 st.set_page_config(
-    page_title="Lục Bát Poem Generator",
+    page_title="Lục Bát Line Generator",
     page_icon="📝",
     layout="wide"
 )
@@ -18,19 +18,21 @@ with left_col:
 
 with right_col:
     with st.container():
-        st.title("Lục Bát Poem Generator")
+        st.title("Lục Bát Line Generator")
         st.markdown("""
-        This app generates Vietnamese *lục bát* poems using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
+        This app generates a single Vietnamese *lục* or *bát* poetic line using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
         Model: <a href="https://huggingface.co/melanieyes/melanie-poem-generation" target="_blank">melanieyes/melanie-poem-generation</a>
         """, unsafe_allow_html=True)
 
         with st.expander("📜 Instructions", expanded=True):
             st.markdown("""
-            1. Enter a Vietnamese phrase to begin the poem (typically 6–8 syllables).  
-            2. Click **Generate Poem** to produce 4 lines in *lục bát* style.
+            1. Select line type: **Lục** (6 syllables) or **Bát** (8 syllables).  
+            2. Enter a Vietnamese phrase as a prompt.  
+            3. Click **Generate Line** to get one valid poetic line.
             """)
 
         prompt = st.text_input("✍️ Starting Prompt:", "trăm năm trăm cõi người ta")
+        mode = st.selectbox("🔢 Select Line Type:", options=["luc", "bat"], format_func=lambda x: "Lục (6 chữ)" if x == "luc" else "Bát (8 chữ)")
 
     # ==== Load Model from Hugging Face ====
     @st.cache_resource
@@ -54,34 +56,23 @@ with right_col:
                 return 'trắc'
         return 'bằng'
 
-    def check_luc_bat_tone_rule(line):
+    def check_bat_tone_rule(line):
         words = line.strip().split()
         if len(words) != 8:
             return False
         expected = ['bằng', 'trắc', 'bằng', 'bằng']
         positions = [1, 3, 5, 7]
-        return all(get_tone_class(words[idx]) == exp for idx, exp in zip(positions, expected))
+        return all(get_tone_class(words[i]) == exp for i, exp in zip(positions, expected))
 
-    def split_luc_bat_poem(raw_text, max_lines=3):
-        words = raw_text.strip().split()
-        lines, i, toggle = [], 0, 6
-        while i + toggle <= len(words) and len(lines) < max_lines:
-            line = " ".join(words[i:i+toggle])
-            if toggle == 8 and not check_luc_bat_tone_rule(line):
-                i += 1
-                continue
-            lines.append(line)
-            i += toggle
-            toggle = 8 if toggle == 6 else 6
-        return lines
-
-    def generate_luc_bat_poem(model, tokenizer, prompt, max_lines=3, max_attempts=10):
+    # ==== Generation Logic ====
+    def generate_single_line(model, tokenizer, prompt, mode="luc", max_attempts=10):
+        target_len = 6 if mode == "luc" else 8
         for _ in range(max_attempts):
             inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
             output = model.generate(
                 input_ids=inputs["input_ids"],
                 attention_mask=inputs["attention_mask"],
-                max_new_tokens=50,
+                max_new_tokens=30,
                 temperature=0.9,
                 top_k=40,
                 top_p=0.95,
@@ -91,19 +82,22 @@ with right_col:
                 pad_token_id=tokenizer.pad_token_id
             )
             decoded = tokenizer.decode(output[0], skip_special_tokens=True)
-            cleaned = decoded.replace("[SOS]", "").replace("[EOS]", "").replace("[EOL]", "")
-            lines = split_luc_bat_poem(cleaned, max_lines=max_lines)
-            if len(lines) == max_lines:
-                return lines
-        return ["[FAILED TO GENERATE]"] * max_lines
+            words = decoded.strip().split()
+            for i in range(len(words) - target_len + 1):
+                candidate = " ".join(words[i:i + target_len])
+                if mode == "luc":
+                    return candidate
+                elif mode == "bat" and check_bat_tone_rule(candidate):
+                    return candidate
+        return "[FAILED TO GENERATE LINE]"
 
     # ==== Generate and Display ====
-    if st.button("📌 Generate Poem"):
+    if st.button("📌 Generate Line"):
         with st.spinner("✨ Generating..."):
             try:
-                poem_lines = generate_luc_bat_poem(model, tokenizer, prompt, max_lines=4)
-                st.subheader("🌸 Generated Lục Bát Poem")
-                st.text("\n".join(poem_lines))
+                line = generate_single_line(model, tokenizer, prompt, mode=mode)
+                st.subheader("🌸 Generated Poetic Line")
+                st.text(line)
             except Exception as e:
                 st.error(f"❌ Error: {e}")
 
