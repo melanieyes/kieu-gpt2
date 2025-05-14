@@ -5,7 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # ==== Streamlit Config ====
 st.set_page_config(
-    page_title="Luc Bát Poem Generator",
+    page_title="Lục Bát Poem Generator",
     page_icon="📝",
     layout="wide"
 )
@@ -18,7 +18,7 @@ with left_col:
 
 with right_col:
     with st.container():
-        st.title("Luc Bát Poem Generator")
+        st.title("Lục Bát Poem Generator")
         st.markdown("""
         This app generates Vietnamese *lục bát* poems using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
         Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
@@ -30,7 +30,7 @@ with right_col:
             2. Click **Generate Poem** to produce 4 lines in *lục bát* style.
             """)
 
-        prompt = st.text_input("✍️ Starting Prompt:", "thương sao cho trọn thì thương")
+        prompt = st.text_input("✍️ Starting Prompt:", "trăm năm trăm cõi người ta")
 
     # ==== Load Model from Hugging Face ====
     @st.cache_resource
