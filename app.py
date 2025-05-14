@@ -22,11 +22,10 @@ with st.expander("📜 Instructions"):
     1. Provide a starting phrase or idea in Vietnamese.
     2. Tune the generation parameters for desired creativity and coherence.
     3. Click "Generate Poem" and enjoy the result.
-    4. You may copy or save the output.
     """)
 
 # ====================== Input Prompt ======================
-prompt_input = st.text_area("✍️ Starting Phrase:", "Trăm năm trong cõi người ta\n", height=100)
+prompt_input = st.text_area("✍️ Starting Phrase:", "trăm năm trong cõi người ta\n", height=100)
 
 col1, col_spacer, col2 = st.columns([0.7, 0.1, 1.0])
 
@@ -43,7 +42,10 @@ with col2:
             try:
                 generator = pipeline(
                     "text-generation",
-                    model="melanieyes/kieu-gpt2"
+                    model="melanieyes/kieu-gpt2",
+                    tokenizer="melanieyes/kieu-gpt2",
+                    trust_remote_code=True,
+                    local_files_only=False  # Force download from Hugging Face
                 )
 
                 result = generator(
@@ -61,7 +63,7 @@ with col2:
                     st.write(line)
 
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"⚠️ Error: {e}")
 
 # ====================== Footer ======================
 st.markdown(
