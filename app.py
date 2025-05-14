@@ -1,9 +1,18 @@
 import streamlit as st
+import sys
+import torch
+import transformers
 from transformers import pipeline
+
+# ====================== Debug Info (optional, can remove later) ======================
+st.sidebar.markdown("### ℹ️ Debug Info")
+st.sidebar.write(f"Python version: `{sys.version}`")
+st.sidebar.write(f"PyTorch version: `{torch.__version__}`")
+st.sidebar.write(f"Transformers version: `{transformers.__version__}`")
 
 # ====================== Page Config ======================
 st.set_page_config(
-    page_title="Truyện Kiều - Vietnamese Poem Generation",
+    page_title="Truyện Kiều - Vietnamese Poem Generator",
     page_icon="📝",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -13,21 +22,23 @@ st.set_page_config(
 st.image("truyen-kieu.jpg", width=350)
 st.title("Truyện Kiều - Vietnamese Poem Generator")
 st.markdown(
-    "This app generates verses inspired by **Nguyễn Du's** _Truyện Kiều_, using a GPT-2 model fine-tuned on the text.\n"
-    "Model: [`melanieyes/kieu-gpt2`](https://huggingface.co/melanieyes/kieu-gpt2)"
+    """
+    This app generates verses inspired by **Nguyễn Du**'s *Truyện Kiều*, using a GPT-2 model fine-tuned on the poem.<br>
+    """,
+    unsafe_allow_html=True
 )
 
 with st.expander("📜 Instructions"):
     st.write("""
-    1. Provide a starting phrase or idea in Vietnamese.
-    2. Tune the generation parameters for desired creativity and coherence.
-    3. Click "Generate Poem" and enjoy the result.
+    1. Provide a starting phrase or verse in Vietnamese.
+    2. Adjust the generation parameters.
+    3. Click **Generate Poem** to create a new poetic verse inspired by Truyện Kiều.
     """)
 
 # ====================== Input Prompt ======================
-prompt_input = st.text_area("✍️ Starting Phrase:", "trăm năm trong cõi người ta\n", height=100)
+prompt_input = st.text_area("✍️ Starting Phrase:", "Trăm năm trong cõi người ta\n", height=100)
 
-col1, col_spacer, col2 = st.columns([0.7, 0.1, 1.0])
+col1, col_spacer, col2 = st.columns([0.7, 0.05, 1.0])
 
 with col1:
     max_length = st.slider("Max Output Tokens", 10, 200, 75)
@@ -38,14 +49,14 @@ with col1:
 
 with col2:
     if st.button("📌 Generate Poem"):
-        with st.spinner("Đang tạo thơ..."):
+        with st.spinner("⏳ Generating poem..."):
             try:
                 generator = pipeline(
                     "text-generation",
                     model="melanieyes/kieu-gpt2",
                     tokenizer="melanieyes/kieu-gpt2",
                     trust_remote_code=True,
-                    local_files_only=False  # Force download from Hugging Face
+                    local_files_only=False
                 )
 
                 result = generator(
@@ -72,7 +83,7 @@ st.markdown(
     <div style='text-align: center; color: gray; font-size: 14px;'>
         Made by <strong>Melanie</strong>, 2025<br>
         Product of <em>Introduction to Artificial Intelligence</em> class<br>
-        Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
+        
     </div>
     """,
     unsafe_allow_html=True
