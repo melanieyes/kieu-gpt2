@@ -3,7 +3,7 @@ import torch
 import unicodedata
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# ==== Page Setup ====
+# ==== Streamlit Config ====
 st.set_page_config(
     page_title="Luc Bát Poem Generator",
     page_icon="📝",
@@ -11,26 +11,26 @@ st.set_page_config(
 )
 
 # ==== Layout: Two Columns ====
-left_col, right_col = st.columns([1, 2])
+left_col, right_col = st.columns([1, 2], gap="large")
 
 with left_col:
-    st.image("truyen-kieu.jpg", use_column_width=True, caption="Illustration from Truyện Kiều")
+    st.image("truyen-kieu.jpg", use_container_width=True)
 
 with right_col:
-    st.title("Luc Bát Poem Generator")
-    st.markdown("""
-    This app generates Vietnamese *lục bát* poems using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
-    Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
-    """, unsafe_allow_html=True)
-
-    with st.expander("📜 Instructions", expanded=True):
+    with st.container():
+        st.title("Luc Bát Poem Generator")
         st.markdown("""
-        1. Enter a Vietnamese phrase to begin the poem (typically 6–8 syllables).  
-        2. Click **Generate Poem** to produce 4 lines in *lục bát* style.
-        """)
+        This app generates Vietnamese *lục bát* poems using a GPT-2 model fine-tuned on the **Truyện Kiều** dataset by Nguyễn Du.<br>
+        Model: <a href="https://huggingface.co/melanieyes/kieu-gpt2" target="_blank">melanieyes/kieu-gpt2</a>
+        """, unsafe_allow_html=True)
 
-    # ==== User Input ====
-    prompt = st.text_input("✍️ Starting Prompt:", "thương sao cho trọn thì thương")
+        with st.expander("📜 Instructions", expanded=True):
+            st.markdown("""
+            1. Enter a Vietnamese phrase to begin the poem (typically 6–8 syllables).  
+            2. Click **Generate Poem** to produce 4 lines in *lục bát* style.
+            """)
+
+        prompt = st.text_input("✍️ Starting Prompt:", "thương sao cho trọn thì thương")
 
     # ==== Load Model from Hugging Face ====
     @st.cache_resource
